@@ -1,7 +1,7 @@
 ﻿package models
 
 import (
-	"github.com/kaiquiBenevenutti/db"
+	db2 "aplicacao-web-go/db"
 	"log"
 )
 
@@ -13,8 +13,8 @@ type Produto struct {
 	Quantidade int
 }
 
-func getProdutos() []Produto {
-	db := ConectionDB()
+func GetProdutos() []Produto {
+	db := db2.ConectionDB()
 
 	selectProducts, err := db.Query("SELECT * FROM produtos")
 

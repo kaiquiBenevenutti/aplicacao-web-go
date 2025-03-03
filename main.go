@@ -1,7 +1,7 @@
 ﻿package main
 
 import (
-	"database/sql"
+	model "aplicacao-web-go/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,7 +16,6 @@ func main() {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-
+	produtos := model.GetProdutos()
 	temp.ExecuteTemplate(w, "index", produtos)
-	defer db.Close()
 }
