@@ -1,6 +1,8 @@
 ﻿package main
 
 import (
+	"database/sql"
+	_ "github.com/lib/pq"
 	"html/template"
 	"log"
 	"net/http"
@@ -9,10 +11,20 @@ import (
 var temp = template.Must(template.ParseGlob("templates/*.html"))
 
 type Produto struct {
+	Id         int
 	Nome       string
 	Descricao  string
 	Valor      float64
 	Quantidade int
+}
+
+func conectionDB() *sql.DB {
+	connStr := "user=postgres dbname=web_aplicacao_go port=5432 sslmode=disable password=Kaiquirb1!"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db
 }
 
 func main() {
@@ -22,14 +34,36 @@ func main() {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	produtos := []Produto{
-		{"Cachorro quente", "Muito saboroso", 15.00, 25},
-		{"Camiseta", "Bem bonita", 29.99, 10},
+
+	db := conectionDB()
+
+	selectProducts, err := db.Query("SELECT * FROM produtos")
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	err := temp.ExecuteTemplate(w, "index", produtos)
-	if err != nil {
-		http.Error(w, "Erro ao renderizar a página", http.StatusInternalServerError)
-		log.Println("Erro no template:", err)
+	p := Produto{}
+	produtos := []Produto{}
+
+	for selectProducts.Next() {
+		var id, quantidade int
+		var nome, descricao string
+		var valor float64
+
+		err := selectProducts.Scan(&id, &nome, &descricao, &valor, &quantidade)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		p.Nome = nome
+		p.Descricao = descricao
+		p.Valor = valor
+		p.Quantidade = quantidade
+
+		produtos = append(produtos, p)
 	}
+
+	temp.ExecuteTemplate(w, "index", produtos)
+	defer db.Close()
 }
