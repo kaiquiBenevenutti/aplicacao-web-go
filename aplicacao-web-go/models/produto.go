@@ -2,7 +2,9 @@
 
 import (
 	db2 "aplicacao-web-go/db"
+	"database/sql"
 	"log"
+	"time"
 )
 
 type Produto struct {
@@ -16,7 +18,7 @@ type Produto struct {
 func GetProdutos() []Produto {
 	db := db2.ConectionDB()
 
-	selectProducts, err := db.Query("SELECT * FROM produtos")
+	selectProducts, err := db.Query("SELECT * FROM produtos where exclusao is null ")
 
 	if err != nil {
 		log.Fatal(err)
@@ -29,8 +31,9 @@ func GetProdutos() []Produto {
 		var id, quantidade int
 		var nome, descricao string
 		var valor float64
+		var exclusao sql.NullTime
 
-		err := selectProducts.Scan(&id, &nome, &descricao, &valor, &quantidade)
+		err := selectProducts.Scan(&id, &nome, &descricao, &valor, &quantidade, &exclusao)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -39,6 +42,7 @@ func GetProdutos() []Produto {
 		p.Descricao = descricao
 		p.Valor = valor
 		p.Quantidade = quantidade
+		p.Id = id
 
 		produtos = append(produtos, p)
 	}
@@ -53,5 +57,15 @@ func PostProdutos(produto Produto) {
 		log.Fatal(err)
 	}
 	executa.Exec(produto.Nome, produto.Descricao, produto.Valor, produto.Quantidade)
+	defer db.Close()
+}
+
+func DeleteProduto(id string) {
+	db := db2.ConectionDB()
+	executa, err := db.Prepare("UPDATE produtos SET exclusao = $2 WHERE id=$1")
+	if err != nil {
+		log.Fatal(err)
+	}
+	executa.Exec(id, time.Now())
 	defer db.Close()
 }

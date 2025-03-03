@@ -33,6 +33,7 @@
                         <td>{{.Descricao}}</td>
                         <td>R$ {{printf "%.2f" .Valor}}</td>
                         <td>{{.Quantidade}}</td>
+                        <td><a href="/delete?id={{.Id}}" class="btn btn-danger">Remover</a></td>
                     </tr>
                 {{end}}
                 </tbody>
