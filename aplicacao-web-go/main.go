@@ -1,13 +1,12 @@
 ﻿package main
 
 import (
-	controller "aplicacao-web-go/controllers"
+	"aplicacao-web-go/routes"
 	"log"
 	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/", controller.Index)
-
+	routes.CarregaRotas()
 	log.Fatal(http.ListenAndServe(":8001", nil))
 }

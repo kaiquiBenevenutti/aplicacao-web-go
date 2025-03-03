@@ -45,3 +45,13 @@ func GetProdutos() []Produto {
 	defer db.Close()
 	return produtos
 }
+
+func PostProdutos(produto Produto) {
+	db := db2.ConectionDB()
+	executa, err := db.Prepare("INSERT INTO PRODUTOS(nome,  descricao, preco, quantidade) VALUES ($1, $2, $3, $4)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	executa.Exec(produto.Nome, produto.Descricao, produto.Valor, produto.Quantidade)
+	defer db.Close()
+}
