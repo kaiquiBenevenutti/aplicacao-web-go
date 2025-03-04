@@ -1,6 +1,6 @@
 # Aplicação Web em Go - Controle de Produtos
 
-**Aplicação Web em Go** é um projeto desenvolvido em Go para fazer o controle de produtos, podendo criar novos produtos, editar produtos já cadastrados e deletar.
+**aplicacao-web-go** é um projeto desenvolvido em Go para fazer o controle de produtos, podendo criar novos produtos, editar produtos já cadastrados e deletar.
 
 ## Funcionalidades
 
