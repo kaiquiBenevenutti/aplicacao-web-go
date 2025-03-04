@@ -18,7 +18,7 @@ type Produto struct {
 func GetProdutos() []Produto {
 	db := db2.ConectionDB()
 
-	selectProducts, err := db.Query("SELECT * FROM produtos where exclusao is null ")
+	selectProducts, err := db.Query("SELECT * FROM produtos where exclusao is null order by id")
 
 	if err != nil {
 		log.Fatal(err)
@@ -67,5 +67,37 @@ func DeleteProduto(id string) {
 		log.Fatal(err)
 	}
 	executa.Exec(id, time.Now())
+	defer db.Close()
+}
+
+func EditaProduto(idProduto string) Produto {
+	db := db2.ConectionDB()
+	produtoBanco, _ := db.Query("SELECT * FROM produtos where exclusao is null and id=$1", idProduto)
+	p := Produto{}
+	for produtoBanco.Next() {
+		var id, quantidade int
+		var nome, descricao string
+		var valor float64
+		var exclusao sql.NullTime
+
+		produtoBanco.Scan(&id, &nome, &descricao, &valor, &quantidade, &exclusao)
+
+		p.Nome = nome
+		p.Descricao = descricao
+		p.Valor = valor
+		p.Quantidade = quantidade
+		p.Id = id
+	}
+	defer db.Close()
+	return p
+}
+
+func UpdateProduto(produto Produto) {
+	db := db2.ConectionDB()
+
+	concection, _ := db.Prepare("update produtos set nome=$1, descricao=$2, preco=$3, quantidade=$4 where id=$5")
+
+	concection.Exec(produto.Nome, produto.Descricao, produto.Valor, produto.Quantidade, produto.Id)
+
 	defer db.Close()
 }
