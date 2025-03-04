@@ -40,6 +40,7 @@ O site possui 3 telas:
 
 ### Estrutura do Projeto
 
+ ```bash
 aplicacao-web-go/
 ├── main.go             # Arquivo principal da aplicação
 ├── controllers/        # Controladores para gerenciar as requisições HTTP
@@ -48,7 +49,7 @@ aplicacao-web-go/
 ├── db/                 # Configurações, como conexão com o banco de dados
 └── templates/          # Paginas HTML
 
-
+```
 ### Autor
 
 - Kaiqui Benevenutti
